@@ -9,7 +9,7 @@
 
 
     <EditText
-        android:id="@+id/edtLoginUsername"
+        android:id="@+id/edtLoginEmail"
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_marginStart="8dp"
@@ -20,7 +20,7 @@
         android:background="@drawable/custom_edit_text"
         android:ems="10"
         android:fontFamily="sans-serif-medium"
-        android:hint="Username"
+        android:hint="Email"
         android:inputType="textPersonName"
         android:paddingLeft="10dp"
         android:textCursorDrawable="@null"
@@ -46,7 +46,7 @@
         android:textCursorDrawable="@null"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtLoginUsername" />
+        app:layout_constraintTop_toBottomOf="@+id/edtLoginEmail" />
 
     <Button
         android:id="@+id/btnLogin"
