@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "685999218934",
+    "firebase_url": "https://messenger-ee911.firebaseio.com",
+    "project_id": "messenger-ee911",
+    "storage_bucket": "messenger-ee911.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:685999218934:android:64e6360cc9c0bc0cc50cd7",
+        "android_client_info": {
+          "package_name": "com.camm.booking"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "685999218934-oqui803oq3d5q4oab0iq87jnns7q1nlu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.camm.booking",
+            "certificate_hash": "60d5cd6894f6940694167ebdecac6e1636e8b36e"
+          }
+        },
+        {
+          "client_id": "685999218934-l8j13tq9f9d6rck5v2hvabr943nfevea.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXQGGijxJMJqoWnPBrdlgvxhlXI5-J4ZQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "685999218934-l8j13tq9f9d6rck5v2hvabr943nfevea.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
