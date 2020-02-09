@@ -28,6 +28,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) { }
 
+    // TODO: Save username
     public void insertImage(byte[] imageData){
         SQLiteDatabase db = getWritableDatabase();
         String sql = "INSERT INTO Image VALUES(null, ?)";
