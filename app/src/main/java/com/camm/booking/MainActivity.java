@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +48,13 @@ public class MainActivity extends AppCompatActivity {
     private TextView txtHaveAnAccount;
     private EditText edtRegisterEmail, edtRegisterPassword, edtRegisterUsername;
     private Button btnRegister;
+    private ProgressBar progressRegister;
+
+    private String username;
+    private String email;
+    private String password;
+
+    private Calendar calendar;
 
     private int REQUEST_CODE_FOLDER = 101;
 
@@ -56,6 +64,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Mapping();
+
+        txtHaveAnAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentToLogin = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intentToLogin);
+                finish();
+            }
+        });
 
         profile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,38 +85,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        txtHaveAnAccount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intentToLogin = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intentToLogin);
-            }
-        });
-
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String username = edtRegisterUsername.getText().toString();
-                final String email = edtRegisterEmail.getText().toString();
-                final String password = edtRegisterPassword.getText().toString();
+
+                username = edtRegisterUsername.getText().toString();
+                email = edtRegisterEmail.getText().toString();
+                password = edtRegisterPassword.getText().toString();
 
                 if(email.equals("") || password.equals("") || username.equals("")){
                     Toast.makeText(MainActivity.this, "Fields can't be empty", Toast.LENGTH_SHORT).show();
                     validateAccount(username);
                 }
                 else{
+                    progressRegister.setVisibility(View.VISIBLE);
+
                     final FirebaseAuth mAuth = FirebaseAuth.getInstance();
                     mAuth.createUserWithEmailAndPassword(email, password)
                             .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
-                                        // If sign up successfully, save user to firebase dbs and go to login.
-                                        Toast.makeText(MainActivity.this, "Sign up successfully", Toast.LENGTH_SHORT).show();
-                                        saveUserToFirebase(mAuth.getCurrentUser(), username);
-                                        gotoLoginActivity(email, password);
+                                        saveUserImage(mAuth.getCurrentUser());
                                     } else {
-                                        // If sign up fails, display a message to the user.
                                         if(task.getException() != null)
                                             Toast.makeText(MainActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                     }
@@ -118,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
         edtRegisterPassword = findViewById(R.id.edtRegisterPassword);
         edtRegisterUsername = findViewById(R.id.edtRegisterUsername);
         btnRegister = findViewById(R.id.btnRegister);
+        progressRegister = findViewById(R.id.progressRegister);
     }
 
     private void validateAccount(String username){
@@ -134,16 +143,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void gotoLoginActivity(String carryEmail, String carryPassword){
-        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-        intent.putExtra("email", carryEmail);
-        intent.putExtra("password", carryPassword);
-        startActivity(intent);
-    }
+    private void saveUserImage(final FirebaseUser user){
 
-    private void saveUserToFirebase(final FirebaseUser newUser, final String userName){
-
-        final Calendar calendar = Calendar.getInstance();
+        calendar = Calendar.getInstance();
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference("images");
@@ -170,28 +172,45 @@ public class MainActivity extends AppCompatActivity {
                 imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-
-                        //TODO: create new function to save data
-                        String userImage = uri.toString();
-                        String userId;
-
-                        if(newUser != null){
-                            userId = newUser.getUid();
-                        }
-                        else {
-                            userId = "error" + calendar.getTimeInMillis();
-                            Log.d("error", "mAuth.getCurrentUser() error!");
-                        }
-
-                        User user = new User(userName, userImage);
-
-                        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-                        DatabaseReference mRef = mDatabase.getReference("users");
-                        mRef.child(userId).setValue(user);
+                        saveUserToDatabase(user, uri.toString());
                     }
                 });
             }
         });
+
+    }
+
+    private void saveUserToDatabase(final FirebaseUser newUser, String userImage){
+
+        String userId;
+
+        if(newUser != null){
+            userId = newUser.getUid();
+        }
+        else {
+            calendar = Calendar.getInstance();
+            userId = "error" + calendar.getTimeInMillis();
+            Log.d("error", "mAuth.getCurrentUser() error!");
+        }
+
+        User user = new User(username, userImage);
+
+        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference mRef = mDatabase.getReference("users");
+        mRef.child(userId).setValue(user);
+
+        gotoLoginActivity(email, password);
+    }
+
+    private void gotoLoginActivity(String carryEmail, String carryPassword){
+
+        progressRegister.setVisibility(View.GONE);
+
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        intent.putExtra("email", carryEmail);
+        intent.putExtra("password", carryPassword);
+        startActivity(intent);
+        this.finish();
     }
 
     @Override
@@ -226,6 +245,7 @@ public class MainActivity extends AppCompatActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
     //    private void autoLoadImage(){
 //        database = new SQLiteHandler(this, "profile.sqlite", null, 1);
 //        SQLiteDatabase db = database.getReadableDatabase();
