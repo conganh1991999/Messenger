@@ -47,8 +47,9 @@ public class LoginActivity extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
                                         // Sign in success, update UI with the signed-in user's information
-                                        Toast.makeText(LoginActivity.this, "Sign in successfully", Toast.LENGTH_SHORT).show();
-                                        //FirebaseUser user = mAuth.getCurrentUser();
+                                        Intent intent = new Intent(LoginActivity.this, LatestMessagesActivity.class);
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        startActivity(intent);
                                     } else {
                                         // If sign in fails, display a message to the user.
                                         Toast.makeText(LoginActivity.this, "Sign in failed", Toast.LENGTH_SHORT).show();
@@ -62,7 +63,6 @@ public class LoginActivity extends AppCompatActivity {
         txtBackToRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
                 finish();
             }
         });

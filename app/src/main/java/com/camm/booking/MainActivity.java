@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intentToLogin = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(intentToLogin);
-                finish();
             }
         });
 
@@ -210,7 +209,6 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("email", carryEmail);
         intent.putExtra("password", carryPassword);
         startActivity(intent);
-        this.finish();
     }
 
     @Override
