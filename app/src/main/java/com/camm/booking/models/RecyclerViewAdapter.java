@@ -1,4 +1,4 @@
-package com.camm.booking;
+package com.camm.booking.models;
 
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.camm.booking.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private ArrayList<User> listUser;
 
 
-    RecyclerViewAdapter(ArrayList<User> listUser) {
+    public RecyclerViewAdapter(ArrayList<User> listUser) {
         this.listUser = listUser;
     }
 

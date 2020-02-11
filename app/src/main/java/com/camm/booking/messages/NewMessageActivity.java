@@ -1,4 +1,4 @@
-package com.camm.booking;
+package com.camm.booking.messages;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -9,6 +9,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 
+import com.camm.booking.R;
+import com.camm.booking.models.RecyclerViewAdapter;
+import com.camm.booking.models.User;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;

@@ -1,4 +1,4 @@
-package com.camm.booking;
+package com.camm.booking.models;
 
 public class User {
     private String userName;

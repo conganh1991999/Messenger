@@ -1,4 +1,4 @@
-package com.camm.booking;
+package com.camm.booking.models;
 
 import android.content.Context;
 import android.database.Cursor;
