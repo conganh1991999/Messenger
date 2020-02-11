@@ -8,17 +8,24 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.widget.TextView;
 
 import com.camm.booking.R;
-import com.camm.booking.models.RecyclerViewAdapter;
+// import com.camm.booking.models.RecyclerViewAdapter;
 import com.camm.booking.models.User;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Picasso;
+import com.xwray.groupie.GroupAdapter;
+import com.xwray.groupie.GroupieViewHolder;
+import com.xwray.groupie.Item;
 
-import java.util.ArrayList;
+import de.hdodenhof.circleimageview.CircleImageView;
+
+// import java.util.ArrayList;
 
 public class NewMessageActivity extends AppCompatActivity {
 
@@ -34,6 +41,7 @@ public class NewMessageActivity extends AppCompatActivity {
         actionBar.setTitle("Select User");
 
         Mapping();
+        manageRecycleView();
         getUsersFromDatabase();
 
     }
@@ -42,14 +50,10 @@ public class NewMessageActivity extends AppCompatActivity {
         recyclerviewNewMessage = findViewById(R.id.recyclerviewNewMessage);
     }
 
-    private void fetchDataIntoRecycleView(ArrayList<User> listUser){
+    private void manageRecycleView(){
         recyclerviewNewMessage.setHasFixedSize(true);
-
         LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerviewNewMessage.setLayoutManager(manager);
-
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(listUser);
-        recyclerviewNewMessage.setAdapter(adapter);
     }
 
     private void getUsersFromDatabase(){
@@ -58,14 +62,22 @@ public class NewMessageActivity extends AppCompatActivity {
 
         mRef.addChildEventListener(new ChildEventListener() {
 
-            ArrayList<User> listUser = new ArrayList<>();
+            // ArrayList<User> listUser = new ArrayList<>();
+            GroupAdapter adapter = new GroupAdapter<GroupieViewHolder>();
 
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                User user = dataSnapshot.getValue(User.class);
-                listUser.add(user);
 
-                fetchDataIntoRecycleView(listUser);
+                User user = dataSnapshot.getValue(User.class);
+                if(user != null){
+                    adapter.add(new UserItem(user));
+                }
+
+                recyclerviewNewMessage.setAdapter(adapter);
+
+                // User user = dataSnapshot.getValue(User.class);
+                // listUser.add(user);
+                // fetchDataIntoRecycleView(listUser);
             }
 
             @Override
@@ -89,4 +101,39 @@ public class NewMessageActivity extends AppCompatActivity {
             }
         });
     }
+
+    class UserItem extends Item<GroupieViewHolder>{
+
+        User user;
+        UserItem(User mUser){
+            this.user = mUser;
+        }
+
+        TextView rowUsername;
+        CircleImageView rowUserImage;
+
+        @Override
+        public void bind(@NonNull GroupieViewHolder viewHolder, int position) {
+            rowUsername = viewHolder.itemView.findViewById(R.id.rowUsername);
+            rowUserImage = viewHolder.itemView.findViewById(R.id.rowUserImage);
+            rowUsername.setText(user.getUserName());
+            Picasso.get().load(user.getUserImage()).into(rowUserImage);
+        }
+
+        @Override
+        public int getLayout() {
+            return R.layout.recycler_view_row;
+        }
+    }
+
+    //    private void fetchDataIntoRecycleView(ArrayList<User> listUser){
+//        recyclerviewNewMessage.setHasFixedSize(true);
+//
+//        LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+//        recyclerviewNewMessage.setLayoutManager(manager);
+//
+//        RecyclerViewAdapter adapter = new RecyclerViewAdapter(listUser);
+//        recyclerviewNewMessage.setAdapter(adapter);
+//    }
+
 }
