@@ -7,7 +7,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import com.camm.booking.R;
@@ -22,6 +24,7 @@ import com.squareup.picasso.Picasso;
 import com.xwray.groupie.GroupAdapter;
 import com.xwray.groupie.GroupieViewHolder;
 import com.xwray.groupie.Item;
+import com.xwray.groupie.OnItemClickListener;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -73,6 +76,16 @@ public class NewMessageActivity extends AppCompatActivity {
                     adapter.add(new UserItem(user));
                 }
 
+                adapter.setOnItemClickListener(new OnItemClickListener() {
+                    @Override
+                    public void onItemClick(@NonNull Item item, @NonNull View view) {
+                        // Intent intent = new Intent(view.getContext(), ChatLogActivity.class);
+                        Intent intent = new Intent(NewMessageActivity.this, ChatLogActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                });
+
                 recyclerviewNewMessage.setAdapter(adapter);
 
                 // User user = dataSnapshot.getValue(User.class);
@@ -122,7 +135,7 @@ public class NewMessageActivity extends AppCompatActivity {
 
         @Override
         public int getLayout() {
-            return R.layout.recycler_view_row;
+            return R.layout.new_chat_row;
         }
     }
 
