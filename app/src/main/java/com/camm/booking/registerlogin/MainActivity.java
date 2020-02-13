@@ -13,7 +13,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -55,8 +54,6 @@ public class MainActivity extends AppCompatActivity {
     private String username;
     private String email;
     private String password;
-
-    private Calendar calendar;
 
     private int REQUEST_CODE_FOLDER = 101;
 
@@ -146,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void saveUserImage(final FirebaseUser user){
 
-        calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference("images");
@@ -184,17 +181,10 @@ public class MainActivity extends AppCompatActivity {
     private void saveUserToDatabase(final FirebaseUser newUser, String userImage){
 
         String userId;
+        assert newUser != null;
+        userId = newUser.getUid();
 
-        if(newUser != null){
-            userId = newUser.getUid();
-        }
-        else {
-            calendar = Calendar.getInstance();
-            userId = "error" + calendar.getTimeInMillis();
-            Log.d("error", "mAuth.getCurrentUser() error!");
-        }
-
-        User user = new User(username, userImage);
+        User user = new User(username, userImage, userId);
 
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
         DatabaseReference mRef = mDatabase.getReference("users");

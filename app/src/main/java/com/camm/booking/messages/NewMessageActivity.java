@@ -43,17 +43,13 @@ public class NewMessageActivity extends AppCompatActivity {
         assert actionBar != null;
         actionBar.setTitle("Select User");
 
-        Mapping();
         manageRecycleView();
         getUsersFromDatabase();
 
     }
 
-    private void Mapping(){
-        recyclerviewNewMessage = findViewById(R.id.recyclerviewNewMessage);
-    }
-
     private void manageRecycleView(){
+        recyclerviewNewMessage = findViewById(R.id.recyclerviewNewMessage);
         recyclerviewNewMessage.setHasFixedSize(true);
         LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerviewNewMessage.setLayoutManager(manager);
@@ -79,8 +75,16 @@ public class NewMessageActivity extends AppCompatActivity {
                 adapter.setOnItemClickListener(new OnItemClickListener() {
                     @Override
                     public void onItemClick(@NonNull Item item, @NonNull View view) {
+
+                        UserItem userItem = (UserItem) item;
+
                         // Intent intent = new Intent(view.getContext(), ChatLogActivity.class);
+
+                        // Send friend's data to new ChatLogActivity
                         Intent intent = new Intent(NewMessageActivity.this, ChatLogActivity.class);
+                        intent.putExtra("friendName", userItem.user.getUserName());
+                        intent.putExtra("friendImage", userItem.user.getUserImage());
+                        intent.putExtra("friendId", userItem.user.getUserId());
                         startActivity(intent);
                         finish();
                     }
