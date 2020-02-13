@@ -13,13 +13,15 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.camm.booking.R;
-// import com.camm.booking.models.RecyclerViewAdapter;
 import com.camm.booking.models.User;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 import com.xwray.groupie.GroupAdapter;
 import com.xwray.groupie.GroupieViewHolder;
@@ -27,8 +29,6 @@ import com.xwray.groupie.Item;
 import com.xwray.groupie.OnItemClickListener;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-
-// import java.util.ArrayList;
 
 public class NewMessageActivity extends AppCompatActivity {
 
@@ -39,13 +39,16 @@ public class NewMessageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_message);
 
-        ActionBar actionBar = getSupportActionBar();
-        assert actionBar != null;
-        actionBar.setTitle("Select User");
-
+        setupActionBar();
         manageRecycleView();
         getUsersFromDatabase();
 
+    }
+
+    private void setupActionBar(){
+        ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
+        actionBar.setTitle("Select User");
     }
 
     private void manageRecycleView(){
@@ -55,13 +58,43 @@ public class NewMessageActivity extends AppCompatActivity {
         recyclerviewNewMessage.setLayoutManager(manager);
     }
 
+    private void updateLatestInfo(final String friendId, String friendName, String friendImage){
+
+        FirebaseUser myInfo = FirebaseAuth.getInstance().getCurrentUser();
+        assert myInfo != null;
+        final String myId = myInfo.getUid();
+
+        final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference("latest");
+
+        mRef.child(myId).child(friendId).child("friendName").setValue(friendName);
+        mRef.child(myId).child(friendId).child("friendImage").setValue(friendImage);
+        mRef.child(myId).child(friendId).child("friendId").setValue(friendId);
+
+        DatabaseReference iRef = FirebaseDatabase.getInstance().getReference("users");
+        iRef.child(myId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String myName = dataSnapshot.child("userName").getValue(String.class);
+                String myImage = dataSnapshot.child("userImage").getValue(String.class);
+
+                mRef.child(friendId).child(myId).child("friendName").setValue(myName);
+                mRef.child(friendId).child(myId).child("friendImage").setValue(myImage);
+                mRef.child(friendId).child(myId).child("friendId").setValue(myId);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     private void getUsersFromDatabase(){
+
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
         DatabaseReference mRef = mDatabase.getReference("users");
-
         mRef.addChildEventListener(new ChildEventListener() {
 
-            // ArrayList<User> listUser = new ArrayList<>();
             GroupAdapter adapter = new GroupAdapter<GroupieViewHolder>();
 
             @Override
@@ -78,23 +111,19 @@ public class NewMessageActivity extends AppCompatActivity {
 
                         UserItem userItem = (UserItem) item;
 
-                        // Intent intent = new Intent(view.getContext(), ChatLogActivity.class);
+                        updateLatestInfo(userItem.user.getUserId(), userItem.user.getUserName(), userItem.user.getUserImage());
 
                         // Send friend's data to new ChatLogActivity
                         Intent intent = new Intent(NewMessageActivity.this, ChatLogActivity.class);
                         intent.putExtra("friendName", userItem.user.getUserName());
-                        intent.putExtra("friendImage", userItem.user.getUserImage());
-                        intent.putExtra("friendId", userItem.user.getUserId());
+                        intent.putExtra("friendImage", userItem.user.getUserImage()); // ?? qua hay ko
+                        intent.putExtra("friendId", userItem.user.getUserId()); // ?? qua hay ko
                         startActivity(intent);
                         finish();
                     }
                 });
 
                 recyclerviewNewMessage.setAdapter(adapter);
-
-                // User user = dataSnapshot.getValue(User.class);
-                // listUser.add(user);
-                // fetchDataIntoRecycleView(listUser);
             }
 
             @Override
@@ -142,15 +171,4 @@ public class NewMessageActivity extends AppCompatActivity {
             return R.layout.new_chat_row;
         }
     }
-
-    //    private void fetchDataIntoRecycleView(ArrayList<User> listUser){
-//        recyclerviewNewMessage.setHasFixedSize(true);
-//
-//        LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-//        recyclerviewNewMessage.setLayoutManager(manager);
-//
-//        RecyclerViewAdapter adapter = new RecyclerViewAdapter(listUser);
-//        recyclerviewNewMessage.setAdapter(adapter);
-//    }
-
 }

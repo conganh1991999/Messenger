@@ -13,8 +13,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.camm.booking.R;
+import com.camm.booking.models.LatestMessage;
 import com.camm.booking.models.Message;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -28,6 +30,8 @@ import com.squareup.picasso.Picasso;
 import com.xwray.groupie.GroupAdapter;
 import com.xwray.groupie.GroupieViewHolder;
 import com.xwray.groupie.Item;
+
+import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -116,12 +120,22 @@ public class ChatLogActivity extends AppCompatActivity {
         recyclerviewChatLog.setLayoutManager(manager);
     }
 
+    private void updateLatestMessage(String text, Long time){
+        DatabaseReference mRef = FirebaseDatabase.getInstance().getReference("latest");
+        LatestMessage latestMessage = new LatestMessage(text, toDate(time));
+        mRef.child(myId).child(friendId).child("message").setValue(latestMessage);
+        mRef.child(friendId).child(myId).child("message").setValue(latestMessage);
+    }
+
     private void performSendMessage(){
         String text = edtTypeMessage.getText().toString();
+        edtTypeMessage.setText("");
+        Long time = System.currentTimeMillis()/1000;
         if(text.length() > 0){
             DatabaseReference mRef = FirebaseDatabase.getInstance().getReference("messages").push();
-            Message message = new Message(text, friendId, myId, mRef.getKey(), System.currentTimeMillis()/1000);
+            Message message = new Message(text, friendId, myId, mRef.getKey(), time);
             mRef.setValue(message);
+            updateLatestMessage(text, time);
         }
     }
 
@@ -141,6 +155,7 @@ public class ChatLogActivity extends AppCompatActivity {
                         adapter.add(new ChatFromItem(message.getMessage(), friendImage));
                     }
                 }
+                recyclerviewChatLog.scrollToPosition(adapter.getItemCount() - 1);
             }
 
             @Override
@@ -163,6 +178,29 @@ public class ChatLogActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private String toDate(long timestamp) {
+        Date date = new Date(timestamp * 1000);
+        int day = date.getDay();
+        switch (day){
+            case 0:
+                return "Sun";
+            case 1:
+                return "Mon";
+            case 2:
+                return "Tue";
+            case 3:
+                return "Wed";
+            case 4:
+                return "Thu";
+            case 5:
+                return "Fri";
+            case 6:
+                return "Sat";
+            default:
+                return "Null";
+        }
     }
 
     class ChatFromItem extends Item<GroupieViewHolder>{

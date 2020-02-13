@@ -2,6 +2,7 @@ package com.camm.booking.registerlogin;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -63,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Mapping();
+        setAppActionBar();
 
         txtHaveAnAccount.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,6 +127,16 @@ public class MainActivity extends AppCompatActivity {
         edtRegisterUsername = findViewById(R.id.edtRegisterUsername);
         btnRegister = findViewById(R.id.btnRegister);
         progressRegister = findViewById(R.id.progressRegister);
+    }
+
+    public void setAppActionBar(){
+        ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
+        actionBar.setTitle("Messenger");
+        actionBar.setSubtitle("Lite");
+        actionBar.setLogo(R.drawable.messenger);
+        actionBar.setDisplayUseLogoEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
     }
 
     private void validateAccount(String username){
@@ -236,18 +248,4 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    //    private void autoLoadImage(){
-//        database = new SQLiteHandler(this, "profile.sqlite", null, 1);
-//        SQLiteDatabase db = database.getReadableDatabase();
-//
-//        Cursor cursorImage = db.query("Image", null, null, null, null, null, null);
-//
-//        if(cursorImage.moveToFirst()){
-//            byte[] image = cursorImage.getBlob(1);
-//            Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
-//            profile.setImageBitmap(bitmap);
-//        }
-//        cursorImage.close();
-//        db.close();
-//    }
 }

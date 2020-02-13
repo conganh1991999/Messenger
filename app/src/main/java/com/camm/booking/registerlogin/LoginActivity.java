@@ -1,6 +1,7 @@
 package com.camm.booking.registerlogin;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -30,6 +31,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         Mapping();
+        setAppActionBar();
         autoFillEmailPassword();
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -75,6 +77,16 @@ public class LoginActivity extends AppCompatActivity {
         edtLoginEmail = findViewById(R.id.edtLoginEmail);
         edtLoginPassword = findViewById(R.id.edtLoginPassword);
         btnLogin = findViewById(R.id.btnLogin);
+    }
+
+    public void setAppActionBar(){
+        ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
+        actionBar.setTitle("Messenger");
+        actionBar.setSubtitle("Lite");
+        actionBar.setLogo(R.drawable.messenger);
+        actionBar.setDisplayUseLogoEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
     }
 
     private void autoFillEmailPassword(){
