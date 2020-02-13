@@ -20,8 +20,13 @@
         android:id="@+id/rowTextChatFrom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/custom_text_view"
+        android:fontFamily="sans-serif-medium"
         android:maxWidth="240dp"
-        android:text="Firebase gives you the tools to develop high-quality apps, grow your user base, and earn more money."
+        android:padding="8dp"
+        android:text="demo"
+        android:textColor="@android:color/black"
         app:layout_constraintStart_toEndOf="@+id/rowImageChatFrom"
         app:layout_constraintTop_toTopOf="parent" />
 
